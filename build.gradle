@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+group 'to.tinypota.ebipublicbot'
+version '1.0.0'
+
+repositories {
+    mavenCentral()
+    // Include atlassian third party repository for daisydiff
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation("net.dv8tion:JDA:5.0.0")
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'to.tinypota.ebipublicbot.Main' // Replace with your main class
+    }
+}
+
+shadowJar {
+    archiveBaseName.set('ebipublicbot')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
+
+tasks.build.dependsOn tasks.shadowJar
