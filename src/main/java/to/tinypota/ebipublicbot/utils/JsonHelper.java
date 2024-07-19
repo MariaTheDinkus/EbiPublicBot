@@ -55,14 +55,25 @@ public class JsonHelper {
         jsonFile.renameTo(jsonFileOld);
     }
 
-    public static <T> ArrayList<T> loadAllFromJson(Class<T> valueType) throws IOException {
+    public static <T> ArrayList<T> loadAllFromJson(Class<T> valueType) {
         ObjectMapper mapper = new ObjectMapper();
         ArrayList<T> objects = new ArrayList<>();
-        var files = getJsonFiles();
+        List<File> files = null;
+        try {
+            files = getJsonFiles();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         System.out.println(files);
         for (File file : files) {
-            T object = mapper.readValue(file, valueType);
-            objects.add(object);
+            T object = null;
+            try {
+                object = mapper.readValue(file, valueType);
+            } catch (IOException e) {
+                System.out.println("Not an instance of the class: " + valueType.getName() + " for file: " + file.getName());
+            }
+            if (object != null)
+                objects.add(object);
         }
         return objects;
     }

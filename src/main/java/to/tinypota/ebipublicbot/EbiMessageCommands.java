@@ -39,7 +39,11 @@ public class EbiMessageCommands {
             EbiCommands.updateCommands(bot);
         }).build(discordBot);
 
-        var addMessageCommand = new BaseCommand("addmessagecommand", "Add a message command.").run((bot, event) -> {
+        var addMessageCommand = new BaseCommand("addmessagecommand", "Add a message command.",
+                new OptionData(OptionType.STRING, "name", "The name of the command", true),
+                new OptionData(OptionType.STRING, "description", "The description of the command", true),
+                new OptionData(OptionType.STRING, "message", "The message to be sent when the command is used", true)
+        ).run((bot, event) -> {
             // Use moderator check to cancel command if not a moderator
             if (!EbiCommands.isModerator(event.getMember())) {
                 event.reply("You must be a moderator to use this command").setEphemeral(true).queue();
@@ -68,7 +72,9 @@ public class EbiMessageCommands {
             event.replyEmbeds(embedBuilder.build()).queue();
         }).build(discordBot);
 
-        var removeMessageCommand = new BaseCommand("removemessagecommand", "Remove a message command.").run((bot, event) -> {
+        var removeMessageCommand = new BaseCommand("removemessagecommand", "Remove a message command.",
+                new OptionData(OptionType.STRING, "name", "The name of the command to remove", true)
+        ).run((bot, event) -> {
             // Use moderator check to cancel command if not a moderator
             if (!EbiCommands.isModerator(event.getMember())) {
                 event.reply("You must be a moderator to use this command").setEphemeral(true).queue();
@@ -192,7 +198,7 @@ public class EbiMessageCommands {
         }).build(discordBot);
 
         // Refresh all reaction role messages command
-        var refreshReactionRole = new BaseCommand("refreshroles", "Refreshes all reaction role messages (for if a role is changed)")
+        var refreshReactionRole = new BaseCommand("refreshroles", "Refreshes all reaction messages (for if a role is changed)")
                 .run((bot, event) -> {
                     // Use moderator check to cancel command if not a moderator
                     if (!EbiCommands.isModerator(event.getMember())) {

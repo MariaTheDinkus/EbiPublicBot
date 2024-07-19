@@ -49,6 +49,7 @@ public class Main {
     }
 
     public static void loadCommands() throws IOException {
+        // Check if is valid MessageCommand
         messageCommands = JsonHelper.loadAllFromJson(MessageCommand.class);
     }
 }

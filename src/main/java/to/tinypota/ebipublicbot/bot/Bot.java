@@ -53,7 +53,7 @@ public class Bot extends ListenerAdapter {
     public void start(String token) throws Exception {
         bot = JDABuilder.createDefault(token)
                 .addEventListeners(this)
-                .setActivity(Activity.playing(activityMessage))
+                .setActivity(Activity.customStatus("\uD83C\uDF64"))
                 .enableIntents(GatewayIntent.MESSAGE_CONTENT, GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
                 .enableCache(CacheFlag.ONLINE_STATUS)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -85,7 +85,11 @@ public class Bot extends ListenerAdapter {
         try {
             GuildReactionRoles guildReactionRoles = JsonHelper.loadFromJson(GuildReactionRoles.class, "reactionroles_" + event.getGuild().getId());
             for (ReactionRoleMessage message : guildReactionRoles.getReactionRoleMessages().values()) {
-                updateReactionRoleMessage(message);
+                // Check if the message is still in the guild and if so, update it using updateReactionRoleMessage(message)
+                event.getGuild().getTextChannelById(message.getChannelId()).retrieveMessageById(message.getMessageId()).queue(
+                        msg -> updateReactionRoleMessage(message),
+                        e -> guildReactionRoles.removeReactionRoleMessage(message.getMessageId())
+                );
             }
         } catch (Exception e) {
             // Ignore if no reaction roles are set up for this guild
@@ -196,6 +200,7 @@ public class Bot extends ListenerAdapter {
 
                     // Add new reactions
                     for (String emojiString : reactionRoleMessage.getEmojiRoleMap().keySet()) {
+                        // Log emoji string
                         message.addReaction(Emoji.fromFormatted(emojiString)).queue();
                     }
                 });
